@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Patient Front — AI Disease Prediction</title>
+<style>
+  body{font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:rgba(255,255,255,0.06);padding:28px;border-radius:12px;max-width:800px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+  h1{margin:0 0 6px 0}
+  p{opacity:0.95}
+  .actions{margin-top:18px;display:flex;gap:10px}
+  a.btn{padding:10px 14px;border-radius:8px;background:white;color:#4b4bff;text-decoration:none;font-weight:700}
+  a.ghost{background:transparent;border:2px solid rgba(255,255,255,0.18);color:white}
+  .summary{margin-top:16px;background:rgba(255,255,255,0.04);padding:12px;border-radius:8px}
+  .muted{opacity:0.9;color:#e8e8ff}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Patient Records</h1>
+    <p class="muted">Manage patient entries and quickly open the patient details form to run predictions.</p>
+
+    <div class="actions">
+      <a class="btn" href="/patient-details">Add / View Patients</a>
+      <a class="ghost btn" href="/dashboard">Open Dashboard</a>
+      <a class="ghost btn" href="/">Home</a>
+    </div>
+
+    <div class="summary" id="summary">
+      <div>Loading patient summary...</div>
+    </div>
+  </div>
+
+<script>
+async function loadSummary(){
+  try{
+    const res = await fetch('/api/patients');
+    if(!res.ok) throw new Error('Failed to load');
+    const patients = await res.json();
+    const el = document.getElementById('summary');
+    if(!patients || patients.length===0){
+      el.innerHTML = '<div>No saved patients yet.</div>';
+      return;
+    }
+    el.innerHTML = `<div><strong>Total patients:</strong> ${patients.length}</div><div style="margin-top:8px" class="muted">Latest: ${patients[patients.length-1].created_at || '—'}</div>`;
+  }catch(e){
+    document.getElementById('summary').textContent = 'Unable to load patient summary.';
+  }
+}
+
+loadSummary();
+</script>
+</body>
+</html>

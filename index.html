@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏥 AI Disease Prediction System</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🏥 Disease Prediction System</h1>
+      <p>Predicting Diabetes, Hypertension, and Heart Disease Risk</p>
+      <a href="/dashboard" class="dashboard-link" title="View Performance Dashboard">📊 View Dashboard</a>
+    </div>
+
+    <!-- Model Info -->
+    <div id="modelInfo" class="model-info"></div>
+
+    <!-- Prediction Form -->
+    <form id="predictionForm" class="form">
+      <div class="form-grid">
+        <div class="field">
+          <label for="glucose">Glucose Level</label>
+          <input type="number" id="glucose" name="Glucose" step="0.1" min="0" max="300" required>
+          <small>Plasma glucose concentration (mg/dL)</small>
+        </div>
+
+        <div class="field">
+          <label for="bloodpressure">Blood Pressure</label>
+          <input type="number" id="bloodpressure" name="BloodPressure" step="0.1" min="0" max="200" required>
+          <small>Diastolic blood pressure (mm Hg)</small>
+        </div>
+
+        <div class="field">
+          <label for="skinthickness">Skin Thickness</label>
+          <input type="number" id="skinthickness" name="SkinThickness" step="0.1" min="0" max="150" required>
+          <small>Triceps skin fold thickness (mm)</small>
+        </div>
+
+        <div class="field">
+          <label for="insulin">Insulin Level</label>
+          <input type="number" id="insulin" name="Insulin" step="0.1" min="0" max="900" required>
+          <small>2-Hour serum insulin (mu U/ml)</small>
+        </div>
+
+        <div class="field">
+          <label for="bmi">BMI</label>
+          <input type="number" id="bmi" name="BMI" step="0.1" min="0" max="70" required>
+          <small>Body mass index (kg/m²)</small>
+        </div>
+
+        <div class="field">
+          <label for="dpf">Diabetes Pedigree Function</label>
+          <input type="number" id="dpf" name="DiabetesPedigreeFunction" step="0.001" min="0" max="3" required>
+          <small>Family history risk factor (0-3)</small>
+        </div>
+
+        <div class="field">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="Age" step="1" min="18" max="120" required>
+          <small>Age in years</small>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-predict">🔮 Predict Now</button>
+    </form>
+
+    <!-- Result Display -->
+    <div id="result" class="result hidden"></div>
+    
+    <!-- Error Display -->
+    <div id="error" class="error hidden"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Analyzing data...</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>💡 Disclaimer: This system is for educational purposes only and should not be used for medical diagnosis.</p>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

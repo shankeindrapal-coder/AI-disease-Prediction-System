@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details</title>
+    <style>
+        body{font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;background:#f4f6fb;padding:24px}
+        .container{max-width:1000px;margin:0 auto}
+        .card{background:white;padding:20px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.06);margin-bottom:20px}
+        h1{margin-bottom:8px}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        label{font-weight:600;font-size:0.9rem}
+        input[type=number]{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px}
+        button{padding:10px 14px;border-radius:8px;border:none;background:#667eea;color:white;font-weight:700;cursor:pointer}
+        .list-item{border-left:4px solid #667eea;padding:10px;margin-bottom:8px;background:#fbfbff}
+        .muted{color:#666;font-size:0.9rem}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h1>Patient Details</h1>
+            <div>
+                <a href="/" style="margin-right:8px">Home</a>
+                <a href="/dashboard">Dashboard</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Enter Patient Information</h3>
+            <form id="patientForm">
+                <div class="grid">
+                    <div>
+                        <label>Glucose</label>
+                        <input type="number" id="glucose" name="Glucose" value="100" step="0.1" required>
+                    </div>
+                    <div>
+                        <label>Blood Pressure</label>
+                        <input type="number" id="bloodpressure" name="BloodPressure" value="70" step="0.1" required>
+                    </div>
+                    <div>
+                        <label>Skin Thickness</label>
+                        <input type="number" id="skinthickness" name="SkinThickness" value="20" step="0.1" required>
+                    </div>
+                    <div>
+                        <label>Insulin</label>
+                        <input type="number" id="insulin" name="Insulin" value="79" step="0.1" required>
+                    </div>
+                    <div>
+                        <label>BMI</label>
+                        <input type="number" id="bmi" name="BMI" value="25" step="0.1" required>
+                    </div>
+                    <div>
+                        <label>Diabetes Pedigree Function</label>
+                        <input type="number" id="dpf" name="DiabetesPedigreeFunction" value="0.5" step="0.01" required>
+                    </div>
+                    <div>
+                        <label>Age</label>
+                        <input type="number" id="age" name="Age" value="30" step="1" required>
+                    </div>
+                    <div style="align-self:end">
+                        <button type="submit">Save Patient</button>
+                    </div>
+                </div>
+            </form>
+            <div id="saveMessage" class="muted" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card">
+            <h3>Saved Patients</h3>
+            <div id="patientsList">
+                <div class="muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadPatients(){
+            const res = await fetch('/api/patients');
+            if(!res.ok) return;
+            const patients = await res.json();
+            const list = document.getElementById('patientsList');
+            if(!patients || patients.length===0){
+                list.innerHTML = '<div class="muted">No saved patients</div>';
+                return;
+            }
+            list.innerHTML = patients.map(p=>{
+                return `<div class="list-item">
+                    <div><strong>ID:</strong> ${p.id} <span class="muted">(${p.created_at||''})</span></div>
+                    <div class="muted">Glucose: ${p.Glucose} • BP: ${p.BloodPressure} • BMI: ${p.BMI} • Age: ${p.Age}</div>
+                </div>`
+            }).join('');
+        }
+
+        document.getElementById('patientForm').addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const formData = {
+                Glucose: parseFloat(document.getElementById('glucose').value),
+                BloodPressure: parseFloat(document.getElementById('bloodpressure').value),
+                SkinThickness: parseFloat(document.getElementById('skinthickness').value),
+                Insulin: parseFloat(document.getElementById('insulin').value),
+                BMI: parseFloat(document.getElementById('bmi').value),
+                DiabetesPedigreeFunction: parseFloat(document.getElementById('dpf').value),
+                Age: parseInt(document.getElementById('age').value,10)
+            };
+
+            const res = await fetch('/api/patients',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(formData)
+            });
+
+            const msg = document.getElementById('saveMessage');
+            if(res.ok){
+                msg.textContent = 'Saved patient successfully.';
+                loadPatients();
+            } else {
+                const err = await res.json();
+                msg.textContent = 'Error: ' + (err.error||'Unable to save');
+            }
+            setTimeout(()=>msg.textContent='','3000');
+        });
+
+        loadPatients();
+    </script>
+</body>
+</html>
